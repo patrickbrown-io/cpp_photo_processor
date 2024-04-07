@@ -257,7 +257,6 @@ void applyVignetteEffect(vector<vector<Pixel>>& image) {
         }
     }
 }
-
 /**
  * Process 2: Applies a clarendon effect to the specified image
  * @param image The Vector Image
@@ -291,7 +290,6 @@ void applyClarendonEffect(vector<vector<Pixel>>& image, double scaling_factor) {
     }
 }
 }
-
 /**
  * Process 3: Applies a grayscale effect to the specified image
  * @param image The Vector Image
@@ -336,7 +334,29 @@ vector<vector<Pixel>> apply90Rotation(vector<vector<Pixel>>& image, int rotation
 
     return rotatedImage;
 }
+/**
+ * Process 6: Enlarges the image in the x and y direction
+ * @param x_scale The x scale direction
+ * @param y_scale The y scale direction
+ */
+vector<vector<Pixel>> process_6(const vector<vector<Pixel>>& image, int x_scale, int y_scale){
+    int height = image.size();
+    int width = image[0].size();
+    int newHeight = height * y_scale;
+    int newWidth = width * x_scale;
 
+    vector<vector<Pixel>> newImage(newHeight, vector<Pixel>(newWidth));
+
+    for (int row = 0; row < newHeight; ++row) {
+        for (int col = 0; col < newWidth; ++col) {
+            int origRow = row / y_scale;
+            int origCol = col / x_scale;
+            newImage[row][col] = image[origRow][origCol];
+        }
+    }
+    return newImage;
+
+}
 
 int main()
 {
@@ -470,8 +490,29 @@ int main()
             break;
             }
         case 6:
+        {
             cout << "Enlarge selected" << endl;
+             // Get output name
+            string outputname;
+            cout << "Enter output BMP filename: ";
+            cin >> outputname;
+            // Get X and Y
+            int x_val;
+            int y_val;
+            cout << endl;
+            cout << "Enter X scale: ";
+            cin >> x_val;
+            cout << endl;
+            cout << "Enter Y scale: ";
+            cin >> y_val;
+            // Get image
+            vector<vector<Pixel>> image = read_image(filename);
+            // Run effect
+            write_image(outputname, process_6(image,x_val,y_val));
+            cout << endl;
+            cout << "Enlarge successfully applied!";
             break;
+        }
         case 7:
             cout << "High contrast selected" << endl;
             break;
