@@ -237,6 +237,99 @@ bool write_image(string filename, const vector<vector<Pixel>>& image)
 // Quick terminal command
 // g++ -std=c++11 -o test main.cpp (change test to whatever you wanna call it)
 
+/**
+ * Process 1: Applies a vignette effect to the specified image
+ * @param image The Vector Image
+ */
+void applyVignetteEffect(vector<vector<Pixel>>& image) {
+    int height = image.size();
+    int width = image[0].size();
+    double centerX = width / 2.0;
+    double centerY = height / 2.0;
+
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+            double distance = sqrt(pow(col - centerX, 2) + pow(row - centerY, 2));
+            double scaling_factor = (height - distance) / height;
+            image[row][col].red = image[row][col].red * scaling_factor;
+            image[row][col].green = image[row][col].green * scaling_factor;
+            image[row][col].blue =image[row][col].blue * scaling_factor;
+        }
+    }
+}
+
+/**
+ * Process 2: Applies a clarendon effect to the specified image
+ * @param image The Vector Image
+ * @param scaling_factor a double value you'd like to apply to the effect
+ */
+void applyClarendonEffect(vector<vector<Pixel>>& image, double scaling_factor) {
+    int height = image.size();
+    int width = image[0].size();
+
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+            double average = (image[row][col].red + image[row][col].green + image[row][col].blue)/3;
+//             If cell is light, make it lighter
+            if(average >= 170)
+            {
+                image[row][col].red = (225 - (225 - image[row][col].red) * scaling_factor);
+                image[row][col].green = (225 - (225 - image[row][col].green) * scaling_factor);
+                image[row][col].blue = (225 - (225 - image[row][col].blue) * scaling_factor);
+            
+            } else if(average < 90)
+            {
+                image[row][col].red = image[row][col].red * scaling_factor;
+                image[row][col].green = image[row][col].green* scaling_factor;
+                image[row][col].blue = image[row][col].blue * scaling_factor;
+            } else {
+                image[row][col].red = image[row][col].red;
+                image[row][col].green = image[row][col].green;
+                image[row][col].blue = image[row][col].blue;
+            }
+
+    }
+}
+}
+
+/**
+ * Process 3: Applies a grayscale effect to the specified image
+ * @param image The Vector Image
+ */
+void applyGrayscaleEffect(vector<vector<Pixel>>& image) {
+    int height = image.size();
+    int width = image[0].size();
+
+        for (int row = 0; row < height; ++row) {
+            for (int col = 0; col < width; ++col) {
+                double average = (image[row][col].red + image[row][col].green + image[row][col].blue)/3;
+                image[row][col].red = average;
+                image[row][col].green = average;
+                image[row][col].blue = average;
+            }
+        }
+}
+/**
+ * Process 4: Rotates the specified image 90 degrees
+ * @param image The Vector Image
+ */
+vector<vector<Pixel>> apply90Rotation(vector<vector<Pixel>>& image) {
+    int height = image.size();
+    int width = image[0].size();
+
+    // Create the new vector with reversed h/w
+    vector<vector<Pixel>> rotatedImage(width, vector<Pixel>(height));
+    
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+            int newRow = col;
+            int newCol = (height - 1) - row;
+            rotatedImage[newRow][newCol] = image[row][col];
+        }
+    }
+    return rotatedImage;
+}
+
 int main()
 {
 
@@ -282,17 +375,69 @@ int main()
             cout << "Change image selected" << endl;
             break;
         case 1:
+            {
             cout << "Vignette selected" << endl;
+             // Get output name
+            string outputname;
+            cout << "Enter output BMP filename:" << endl;
+            cin >> outputname;
+            // Get image
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            applyVignetteEffect(image);
+             // Save
+            write_image(outputname, image);
+            cout << "Successfully applied vignette!" << endl << endl;
             break;
+            }
         case 2:
+            {
             cout << "Clarendon selected" << endl;
+             // Get output name + scaling factor
+            string outputname;
+            double scaling;
+            cout << "Enter output BMP filename:" << endl;
+            cin >> outputname;
+            cout << "Enter scaling factor:" << endl;
+            cin >> scaling;
+            // Get image 
+            vector<vector<Pixel>> image = read_image(filename);
+            applyClarendonEffect(image, scaling);
+            // Save
+            write_image(outputname, image);
+            cout << "Successfully applied Clarendon!" << endl << endl;
             break;
+            }
         case 3:
-            cout << "Greyscale selected" << endl;
+            {
+            cout << "Grayscale selected" << endl;
+             // Get output name
+            string outputname;
+            cout << "Enter output BMP filename:" << endl;
+            cin >> outputname;
+            // Get image
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            applyGrayscaleEffect(image);
+             // Save
+            write_image(outputname, image);
+            cout << "Successfully applied grayscale!" << endl << endl;
+            }
             break;
         case 4:
+            {
             cout << "Rotate 90 degrees selected" << endl;
+              // Get output name
+            string outputname;
+            cout << "Enter output BMP filename:" << endl;
+            cin >> outputname;
+            // Get image
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            write_image(outputname, apply90Rotation(image));
+            cout << "Successfully applied 90 degree rotation!" << endl << endl;
             break;
+            }
         case 5:
             cout << "Rotate multiple 90 degrees selected" << endl;
             break;
