@@ -312,32 +312,40 @@ void applyGrayscaleEffect(vector<vector<Pixel>>& image) {
 /**
  * Process 4: Rotates the specified image 90 degrees
  * @param image The Vector Image
+ * @param rotations The number of rotations
  */
-vector<vector<Pixel>> apply90Rotation(vector<vector<Pixel>>& image) {
-    int height = image.size();
-    int width = image[0].size();
+vector<vector<Pixel>> apply90Rotation(vector<vector<Pixel>>& image, int rotations) {
+    int actual_rotations = rotations % 4;
+    vector<vector<Pixel>> rotatedImage = image; // Start with the original image
 
-    // Create the new vector with reversed h/w
-    vector<vector<Pixel>> rotatedImage(width, vector<Pixel>(height));
-    
-    for (int row = 0; row < height; ++row) {
-        for (int col = 0; col < width; ++col) {
-            int newRow = col;
-            int newCol = (height - 1) - row;
-            rotatedImage[newRow][newCol] = image[row][col];
+    for (int i = 0; i < actual_rotations; ++i) {
+        int height = rotatedImage.size();
+        int width = rotatedImage[0].size();
+        vector<vector<Pixel>> tempImage(width, vector<Pixel>(height));
+
+        for (int row = 0; row < height; ++row) {
+            for (int col = 0; col < width; ++col) {
+                int newRow = col;
+                int newCol = height - 1 - row;
+                tempImage[newRow][newCol] = rotatedImage[row][col];
+            }
         }
+        
+        rotatedImage = tempImage;
     }
+
     return rotatedImage;
 }
+
 
 int main()
 {
 
     string filename;
     cout << "CSPB 1300 Image Processing Application" << endl;
-    cout << "Enter input BMP filename:" << endl;
+    cout << "Enter input BMP filename: ";
     cin >> filename;
-    cout << endl;
+    cout << endl << endl;
     string input;
     int choice;
     do
@@ -356,9 +364,9 @@ int main()
         cout << "9) Darken" << endl;
         cout << "10) Black, white, red, green, blue" << endl;
         cout << endl;
-        cout << "Enter menu selection (Q to quit):" << endl;
+        cout << "Enter menu selection (Q to quit): ";
         cin >> input;
-
+        cout << endl;
         if (input == "Q" || input == "q")
         {
             cout << "Thank you for using my program!" << endl;
@@ -379,7 +387,7 @@ int main()
             cout << "Vignette selected" << endl;
              // Get output name
             string outputname;
-            cout << "Enter output BMP filename:" << endl;
+            cout << "Enter output BMP filename: ";
             cin >> outputname;
             // Get image
             vector<vector<Pixel>> image = read_image(filename);
@@ -387,6 +395,7 @@ int main()
             applyVignetteEffect(image);
              // Save
             write_image(outputname, image);
+            cout << endl;
             cout << "Successfully applied vignette!" << endl << endl;
             break;
             }
@@ -396,15 +405,16 @@ int main()
              // Get output name + scaling factor
             string outputname;
             double scaling;
-            cout << "Enter output BMP filename:" << endl;
+            cout << "Enter output BMP filename: ";
             cin >> outputname;
-            cout << "Enter scaling factor:" << endl;
+            cout << "Enter scaling factor: ";
             cin >> scaling;
             // Get image 
             vector<vector<Pixel>> image = read_image(filename);
             applyClarendonEffect(image, scaling);
             // Save
             write_image(outputname, image);
+            cout << endl;
             cout << "Successfully applied Clarendon!" << endl << endl;
             break;
             }
@@ -413,7 +423,7 @@ int main()
             cout << "Grayscale selected" << endl;
              // Get output name
             string outputname;
-            cout << "Enter output BMP filename:" << endl;
+            cout << "Enter output BMP filename: ";
             cin >> outputname;
             // Get image
             vector<vector<Pixel>> image = read_image(filename);
@@ -421,6 +431,7 @@ int main()
             applyGrayscaleEffect(image);
              // Save
             write_image(outputname, image);
+            cout << endl;
             cout << "Successfully applied grayscale!" << endl << endl;
             }
             break;
@@ -429,18 +440,35 @@ int main()
             cout << "Rotate 90 degrees selected" << endl;
               // Get output name
             string outputname;
-            cout << "Enter output BMP filename:" << endl;
+            cout << "Enter output BMP filename: ";
             cin >> outputname;
             // Get image
             vector<vector<Pixel>> image = read_image(filename);
             // Apply effect
-            write_image(outputname, apply90Rotation(image));
+            write_image(outputname, apply90Rotation(image,1));
             cout << "Successfully applied 90 degree rotation!" << endl << endl;
             break;
             }
         case 5:
+            {
             cout << "Rotate multiple 90 degrees selected" << endl;
+              // Get output name
+            string outputname;
+            cout << "Enter output BMP filename: ";
+            cin >> outputname;
+            // Get number of rotations
+            int rotation_num;
+            cout << endl;
+            cout << "Enter number of 90 degree rotations: ";
+            cin >> rotation_num;
+            // Get image
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            write_image(outputname, apply90Rotation(image,rotation_num));
+            cout << endl;
+            cout << "Successfully applied multiple 90 degree rotations!";
             break;
+            }
         case 6:
             cout << "Enlarge selected" << endl;
             break;
