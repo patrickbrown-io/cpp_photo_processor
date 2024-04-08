@@ -467,7 +467,10 @@ int main()
 {
 
     string filename;
-    cout << "CSPB 1300 Image Processing Application" << endl;
+    cout << "**********************************************" << endl;
+    cout << "*** CSPB 1300 Image Processing Application ***" << endl;
+    cout << "************** by Patrick Brown **************" << endl;
+    cout << "**********************************************" << endl << endl;
     cout << "Enter input BMP filename: ";
     cin >> filename;
     cout << endl << endl;
