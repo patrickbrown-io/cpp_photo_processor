@@ -357,6 +357,68 @@ vector<vector<Pixel>> process_6(const vector<vector<Pixel>>& image, int x_scale,
     return newImage;
 
 }
+/**
+ * Process 7: Convert image to high contrast (black and white only)
+ * @param image The Vector Image
+ */
+void process_7(vector<vector<Pixel>>& image){
+    int height = image.size();
+    int width = image[0].size();
+
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+            // Grey value
+            double average = (image[row][col].red + image[row][col].green + image[row][col].blue)/3;
+
+            if(average >= 255/2){
+                image[row][col].red = 255;
+                image[row][col].green = 255;
+                image[row][col].blue = 255;
+            } else{
+                image[row][col].red = 0;
+                image[row][col].green = 0;
+                image[row][col].blue = 0;
+            }
+        }
+    }
+}
+/**
+ * Process 8: Lightens image by a scaling factor
+ * @param image The Vector Image
+ * @param scaling_factor The scaling factor
+ */
+void process_8(vector<vector<Pixel>>& image, double scaling_factor){
+    int height = image.size();
+    int width = image[0].size();
+
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+
+            image[row][col].red = (255 - (255 - image[row][col].red) * scaling_factor);
+            image[row][col].green = (255 - (255 - image[row][col].green) * scaling_factor);
+            image[row][col].blue = (255 - (255 - image[row][col].blue) * scaling_factor);
+        }
+    }
+}
+/**
+ * Process 9: Darkens image by a scaling factor
+ * @param image The Vector Image
+ * @param scaling_factor The scaling factor
+ */
+void process_9(vector<vector<Pixel>>& image, double scaling_factor){
+    int height = image.size();
+    int width = image[0].size();
+
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+
+            image[row][col].red *= scaling_factor;
+            image[row][col].green *= scaling_factor;
+            image[row][col].blue *= scaling_factor;
+        }
+    }
+}
+
 
 int main()
 {
@@ -514,14 +576,60 @@ int main()
             break;
         }
         case 7:
+        {
             cout << "High contrast selected" << endl;
+             // Get output name
+            string outputname;
+            cout << "Enter output BMP filename: ";
+            cin >> outputname;
+            // Get image
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            process_7(image);
+             // Save
+            write_image(outputname, image);
+            cout << endl;
+            cout << "Successfully applied vignette!" << endl << endl;
             break;
+        }
         case 8:
+        {
             cout << "Lighten selected" << endl;
+            // Get output name + scaling factor
+            string outputname;
+            double scaling;
+            cout << "Enter output BMP filename: ";
+            cin >> outputname;
+            cout << "Enter scaling factor: ";
+            cin >> scaling;
+            // Get image 
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            process_8(image, scaling);
+            write_image(outputname, image);
+            cout << endl;
+            cout << "Successfully applied lighten!" << endl << endl;
             break;
+        }
         case 9:
+        {
             cout << "Darken selected" << endl;
+            // Get output name + scaling factor
+            string outputname;
+            double scaling;
+            cout << "Enter output BMP filename: ";
+            cin >> outputname;
+            cout << "Enter scaling factor: ";
+            cin >> scaling;
+            // Get image 
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            process_9(image, scaling);
+            write_image(outputname, image);
+            cout << endl;
+            cout << "Successfully applied darken!" << endl << endl;
             break;
+        }
         case 10:
             cout << "Black, white, red, green, blue selected" << endl;
             break;
