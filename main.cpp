@@ -418,6 +418,49 @@ void process_9(vector<vector<Pixel>>& image, double scaling_factor){
         }
     }
 }
+/**
+ * Process 10: Converts image to only black, white, red, blue, and green
+ * @param image The Vector Image
+ */
+void process_10(vector<vector<Pixel>>& image){
+    int height = image.size();
+    int width = image[0].size();
+
+    for (int row = 0; row < height; ++row) {
+        for (int col = 0; col < width; ++col) {
+            double maximum = image[row][col].red;
+
+            if(image[row][col].blue > maximum){
+                maximum = image[row][col].blue;
+            }
+            if(image[row][col].green > maximum){
+                maximum = image[row][col].green;
+            }
+
+            if(image[row][col].red + image[row][col].blue + image[row][col].green >= 550){
+                image[row][col].red = 255;
+                image[row][col].blue = 255;
+                image[row][col].green = 255;
+            } else if(image[row][col].red + image[row][col].blue + image[row][col].green <= 150) {
+                image[row][col].red = 0;
+                image[row][col].blue = 0;
+                image[row][col].green = 0;
+            } else if(maximum == image[row][col].red){
+                image[row][col].red = 255;
+                image[row][col].blue = 0;
+                image[row][col].green = 0;
+            } else if(maximum == image[row][col].green){
+                image[row][col].red = 0;
+                image[row][col].blue = 0;
+                image[row][col].green = 255;
+            } else {
+                image[row][col].red = 0;
+                image[row][col].blue = 255;
+                image[row][col].green = 0;
+            }
+        }
+    }
+}
 
 
 int main()
@@ -463,6 +506,9 @@ int main()
         {
         case 0:
             cout << "Change image selected" << endl;
+                cout << "Enter input BMP filename: ";
+                cin >> filename;
+                cout << "Successfully changed input image!" << endl << endl;
             break;
         case 1:
             {
@@ -631,8 +677,20 @@ int main()
             break;
         }
         case 10:
+            {
             cout << "Black, white, red, green, blue selected" << endl;
+            string outputname;
+            cout << "Enter output BMP filename: ";
+            cin >> outputname;
+            // Get image 
+            vector<vector<Pixel>> image = read_image(filename);
+            // Apply effect
+            process_10(image);
+            write_image(outputname, image);
+            cout << endl;
+            cout << "Successfully applied black, white, red, green, blue filter!" << endl << endl;
             break;
+            }
         default:
             cout << "Invalid choice!" << endl;
             break;
